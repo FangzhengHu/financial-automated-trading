@@ -89,19 +89,6 @@ getOrders <- function(store, newRowList, currentPos, params) {
               limitPrices2=limitPrices2))
 }
 
-###############################################################################
-# The following function is purely to help to prevent errrors by checking that 
-# the requirement parameters are available
-###############################################################################
-
-checkParams <- function(params) { # make sure params are correct
-  if (!"lookback" %in% names(params))
-    stop("Parameter lookback not defined for strategy RSI")
-  if (!"threshold" %in% names(params))
-    stop("Parameter lookback not defined for strategy RSI")
-  if (params$threshold < 0 || params$threshold > 50)
-    stop("Parameter lookback is not between 0 and 50")
-}
 
 ###############################################################################
 # All the subsequent functions were designed to simplify and 
@@ -152,17 +139,3 @@ updateStore <- function(store, newRowList, params) {
   return(store)
 }
 
-###############################################################################
-
-# main strategy logic
-
-lgStFt <-	function(clStore,column,iter) {
-  # decide if we should go long/short/flat (returning 1/-1/0)
-  startIndex <- iter - params$lookback - 1
-  rsi <- last(RSI(clStore[startIndex:iter,column],n=params$lookback)) 
-  if (rsi > (50 + params$threshold))
-    return(-1) # short
-  if (rsi < (50 - params$threshold))
-    return(1)  # long
-  return(0)
-}
